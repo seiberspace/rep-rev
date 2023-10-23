@@ -1,7 +1,11 @@
 import createRepRev from './createRepRev.js';
+import {
+	builtIn,
+} from './createInstanceRepRev.js';
 
 //------------------------------------------------------------------------------
-function createRepRevCollection(transformers) {
+// eslint-disable-next-line import/prefer-default-export
+export function createRepRevCollection(transformers = [ ...builtIn ]) {
 	const transformer = createRepRev(
 		(key, value, owner) => {
 			for (const transformer of transformers) {
@@ -28,5 +32,3 @@ function createRepRevCollection(transformers) {
 
 	return transformer;
 }
-
-export default createRepRevCollection;

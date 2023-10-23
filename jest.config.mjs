@@ -15,7 +15,7 @@ const config = {
 	// cacheDirectory: '/tmp/jest_rs',
 
 	// Automatically clear mock calls, instances, contexts and results before every test
-	// clearMocks: false,
+	clearMocks: true,
 
 	// Indicates whether the coverage information should be collected while executing the test
 	collectCoverage: true,
@@ -107,7 +107,7 @@ const config = {
 	// projects: undefined,
 
 	// Use this configuration option to add custom reporters to Jest
-	// reporters: undefined,
+	// reporters: ['default'],
 
 	// Automatically reset mock state before every test
 	// resetMocks: false,
@@ -136,7 +136,7 @@ const config = {
 	// setupFiles: [],
 
 	// A list of paths to modules that run some code to configure or set up the testing framework before each test
-	// setupFilesAfterEnv: [],
+	setupFilesAfterEnv: ['jest-extended/all'],
 
 	// The number of seconds after which a test is considered as slow and reported as such in the results.
 	// slowTestThreshold: 5,
@@ -160,9 +160,10 @@ const config = {
 	// ],
 
 	// An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-	// testPathIgnorePatterns: [
-	//   '/node_modules/'
-	// ],
+	testPathIgnorePatterns: [
+		'/node_modules/',
+		'/cjs',
+	],
 
 	// The regexp pattern or array of patterns that Jest uses to detect test files
 	// testRegex: [],
@@ -186,7 +187,7 @@ const config = {
 	// unmockedModulePathPatterns: undefined,
 
 	// Indicates whether each individual test should be reported during the run
-	// verbose: undefined,
+	verbose: true,
 
 	// An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
 	// watchPathIgnorePatterns: [],
