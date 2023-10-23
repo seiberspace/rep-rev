@@ -38,11 +38,26 @@ function unpackInstance(value) {
 }
 
 //------------------------------------------------------------------------------
-function createInstanceRepRev(className, replace, revive, options = {}) {
+function createInstanceRepRev(classNameArg, replaceArg, reviveArg, options = {}) {
 	const {
 		pack = packInstance,
 		unpack = unpackInstance,
 	} = options;
+
+	// classNameArg is a class.
+	const className = (typeof classNameArg === 'function')
+		? classNameArg.name
+		: classNameArg;
+
+	// Prefer replaceArg, use classNameArg.replace instead if possible.
+	const replace = (typeof replaceArg === 'function')
+		? replaceArg
+		: (typeof classNameArg === 'function') && classNameArg.replace;
+
+	// Prefer reviveArg, use classNameArg.revive instead if possible.
+	const revive = (typeof reviveArg === 'function')
+		? reviveArg
+		: (typeof classNameArg === 'function') && classNameArg.revive;
 
 	return createRepRev(
 		(key, value, owner) => {

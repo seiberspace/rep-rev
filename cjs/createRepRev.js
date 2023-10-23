@@ -1,4 +1,9 @@
-export default createRepRev;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 /**
  * Returns an object with `replace()` and `revive()` methods, that can be
  * passed to JSON.stringify() resp. JSON.parse().
@@ -9,4 +14,14 @@ export default createRepRev;
  * @return {Object}           Object with correctly bindable `replace()` and
  *                            `revive()` methods.
  */
-declare function createRepRev(replace: Function, revive: Function): Object;
+function createRepRev(replace, revive) {
+  return {
+    replace(key, value) {
+      return replace ? replace(key, value, this) : value;
+    },
+    revive(key, value) {
+      return revive ? revive(key, value, this) : value;
+    }
+  };
+}
+var _default = exports.default = createRepRev;
