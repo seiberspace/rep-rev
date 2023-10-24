@@ -22,14 +22,14 @@ function packInstance(className, data) {
 /**
  * Unpacks an instance of a class previously packed by `packInstance()`.
  * In case it can't determine the correct data (classname and instance data),
- * it returns an empty object.
+ * it returns falsy.
  * @param  {[type]} value Packed instance.
  * @return {Object}       Object, either containing a `className` and instance
  *                        data, or empty.
  */
 function unpackInstance(value) {
 	if (typeof value !== 'object' || !value) {
-		return {};
+		return null;
 	}
 	return {
 		className: value[CLS_NAME],
@@ -44,7 +44,8 @@ export function createInstanceRepRev(classNameArg, replaceArg, reviveArg, option
 		unpack = unpackInstance,
 	} = options;
 
-	// classNameArg is a class.
+	// If classNameArg is a class, take name from there. Otherwise
+	// it's the name as a string.
 	const className = (typeof classNameArg === 'function')
 		? classNameArg.name
 		: classNameArg;
@@ -59,40 +60,52 @@ export function createInstanceRepRev(classNameArg, replaceArg, reviveArg, option
 		? reviveArg
 		: (typeof classNameArg === 'function') && classNameArg.revive;
 
-	return createRepRev(
-		(key, value, owner) => {
-			const originalValue = owner[key];
-			if (typeof originalValue !== 'object') {
-				return value;
-			}
-			const cn = originalValue.constructor.name;
-			if (cn === className) {
-				const replacedValue = replace(key, value, owner);
-				if (originalValue === replacedValue) {
-					throw new Error(`You can't return the original value from an object replacer, that would lead to recursion.`);
-				}
-				return pack(className, replacedValue);
-			}
+	//----------------------------------------------------------------------------
+	function replacer(key, value, owner) {
+		const originalValue = owner[key];
+		if (typeof originalValue !== 'object') {
 			return value;
-		},
-		(key, value, owner) => {
-			const { className: cn, data } = unpack(value);
-			if (cn === className) {
-				return revive(key, data, owner);
+		}
+		const cn = originalValue.constructor.name;
+		if (cn === className) {
+			const replacedValue = replace(key, value, owner);
+			if (originalValue === replacedValue) {
+				throw new Error(`You can't return the original value from an object replacer, that would lead to recursion.`, {
+					cause: { key, value, owner },
+				});
 			}
+			return pack(className, replacedValue);
+		}
+		return value;
+	}
+
+	function reviver(key, value, owner) {
+		const unpacked = unpack(value);
+		if (!unpacked || (unpacked.className !== className)) {
 			return value;
-		},
-	);
+		}
+		return revive(key, unpacked.data, owner);
+	}
+
+	return createRepRev(replacer, reviver);
 }
 
-// All these use `owner[key]` instead of `value`, since `value` might already
-// be transformed (e.g. in case of `Date`).
+// All these use `owner[key]` instead of `value` in `replace()`, since `value`
+// is already transformed by JSON (e.g. in case of `Date`).
 
 //------------------------------------------------------------------------------
 export const DateRepRev = createInstanceRepRev(
 	'Date',
 	(key, value, owner) => owner[key].toISOString(),
-	(key, value) => new Date(value),
+	(key, value, owner) => {
+		const d = new Date(value);
+		if (Number.isNaN(d.valueOf())) {
+			throw new TypeError('Invalid date.', {
+				cause: { key, value, owner },
+			});
+		}
+		return d;
+	},
 );
 
 //------------------------------------------------------------------------------

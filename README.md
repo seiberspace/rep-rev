@@ -32,7 +32,17 @@ for (const item of items) {
 
 Time to
 
-### Get started
+### Get Started
+
+#### Install
+
+```sh
+$ npm install rep-rev
+# Or:
+$ yarn add rep-rev
+```
+
+#### Simple Example
 
 ```js
 import {
@@ -43,11 +53,11 @@ const transformer = createRepRevCollection();
 const items = JSON.parse(text, transformer.revive);
 ```
 
-That's it. The default-transformer collection has built-in rep-revs for `Map`, `Set` and
+That's it. The default transformer collection has built-in rep-revs for `Map`, `Set` and
 `Date`.
 
-All of these are transformed through an `InstanceRepRev` which creates an
-intermediate format for the resulting JSON. E.g. a `Date` becomes:
+All of these are transformed through an `InstanceRepRev` which creates / parses
+an intermediate format for the resulting JSON. E.g. a `replaced()`d `Date` becomes:
 
 ```json
 {
@@ -68,3 +78,22 @@ A `Map` becomes:
 }
 ```
 
+The `data`-member can easily be serialized back into a `Map` or `Date` via
+`new(data)`.
+
+#### More Examples
+
+There are two examples in the [examples folder](examples), I think, you
+get the gist of it. Planning on adding more.
+
+That's all for now.
+
+Oh, one more thing:
+
+### Q&A
+
+- *Can I transform json to json?*  
+  Well... there is an experimental function `transformJson(value, repl)` that
+  mimics the behaviour of `JSON[stringify|parse]`
+  (I hope - unit tests still missing). You can use that with both a `replace()`
+  or a `revive()` to map json to json.

@@ -3,7 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.builtIn = exports.SetRepRev = exports.MapRepRev = exports.DateRepRev = void 0;
+exports.createInstanceRepRev = createInstanceRepRev;
 var _createRepRev = _interopRequireDefault(require("./createRepRev.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 //----------------------------------------------------------------------------
@@ -83,4 +84,18 @@ function createInstanceRepRev(classNameArg, replaceArg, reviveArg, options = {})
     return value;
   });
 }
-var _default = exports.default = createInstanceRepRev;
+
+// All these use `owner[key]` instead of `value`, since `value` might already
+// be transformed (e.g. in case of `Date`).
+
+//------------------------------------------------------------------------------
+const DateRepRev = exports.DateRepRev = createInstanceRepRev('Date', (key, value, owner) => owner[key].toISOString(), (key, value) => new Date(value));
+
+//------------------------------------------------------------------------------
+const MapRepRev = exports.MapRepRev = createInstanceRepRev('Map', (key, value, owner) => [...owner[key].entries()], (key, value) => new Map(value));
+
+//------------------------------------------------------------------------------
+const SetRepRev = exports.SetRepRev = createInstanceRepRev('Set', (key, value, owner) => [...owner[key].values()], (key, value) => new Set(value));
+
+//------------------------------------------------------------------------------
+const builtIn = exports.builtIn = [DateRepRev, MapRepRev, SetRepRev];

@@ -3,19 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.builtIn = exports.SetRepRev = exports.MapRepRev = exports.DateRepRev = void 0;
-Object.defineProperty(exports, "createInstanceRepRev", {
-  enumerable: true,
-  get: function () {
-    return _createInstanceRepRev.default;
-  }
-});
-Object.defineProperty(exports, "createRepRevCollection", {
-  enumerable: true,
-  get: function () {
-    return _createRepRevCollection.default;
-  }
-});
+var _exportNames = {
+  transformJson: true
+};
 exports.default = void 0;
 Object.defineProperty(exports, "transformJson", {
   enumerable: true,
@@ -24,28 +14,34 @@ Object.defineProperty(exports, "transformJson", {
   }
 });
 var _createRepRev = _interopRequireDefault(require("./createRepRev.js"));
-var _createRepRevCollection = _interopRequireDefault(require("./createRepRevCollection.js"));
-var _createInstanceRepRev = _interopRequireDefault(require("./createInstanceRepRev.js"));
 var _transformJson = _interopRequireDefault(require("./transformJson.js"));
+var _createRepRevCollection = require("./createRepRevCollection.js");
+Object.keys(_createRepRevCollection).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _createRepRevCollection[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _createRepRevCollection[key];
+    }
+  });
+});
+var _createInstanceRepRev = require("./createInstanceRepRev.js");
+Object.keys(_createInstanceRepRev).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _createInstanceRepRev[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _createInstanceRepRev[key];
+    }
+  });
+});
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 /**
  * Main
  */
-
-// All these use `owner[key]` instead of `value`, since `value` might already
-// be transformed (e.g. in case of `Date`).
-
-//------------------------------------------------------------------------------
-const DateRepRev = exports.DateRepRev = (0, _createInstanceRepRev.default)('Date', (key, value, owner) => owner[key].toISOString(), (key, value) => new Date(value));
-
-//------------------------------------------------------------------------------
-const MapRepRev = exports.MapRepRev = (0, _createInstanceRepRev.default)('Map', (key, value, owner) => [...owner[key].entries()], (key, value) => new Map(value));
-
-//------------------------------------------------------------------------------
-const SetRepRev = exports.SetRepRev = (0, _createInstanceRepRev.default)('Set', (key, value, owner) => [...owner[key].values()], (key, value) => new Set(value));
-
-//------------------------------------------------------------------------------
-const builtIn = exports.builtIn = [DateRepRev, MapRepRev, SetRepRev];
-
 //------------------------------------------------------------------------------
 var _default = exports.default = _createRepRev.default;

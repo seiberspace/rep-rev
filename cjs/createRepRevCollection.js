@@ -3,11 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.createRepRevCollection = createRepRevCollection;
 var _createRepRev = _interopRequireDefault(require("./createRepRev.js"));
+var _createInstanceRepRev = require("./createInstanceRepRev.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 //------------------------------------------------------------------------------
-function createRepRevCollection(transformers) {
+// eslint-disable-next-line import/prefer-default-export
+function createRepRevCollection(transformers = [..._createInstanceRepRev.builtIn]) {
   const transformer = (0, _createRepRev.default)((key, value, owner) => {
     for (const transformer of transformers) {
       const newValue = transformer.replace.call(owner, key, value);
@@ -28,4 +30,3 @@ function createRepRevCollection(transformers) {
   transformer.transformers = transformers;
   return transformer;
 }
-var _default = exports.default = createRepRevCollection;
